@@ -21,4 +21,4 @@
 
 ## Repositori
 
-URL: https://regcel-11.github.io/2611500021-PWD-TI1A-2627O/pertemuan-04/
+URL: [https://github.com/REGCEL-11/2611500021-PWD-TI1A-2627O/pertemuan-04]

@@ -75,21 +75,3 @@ konstanta, operator, percabangan, perulangan, serta fungsi bawaan PHP.
     kali (versi PHP dan versi statis). Keduanya dapat dirapikan pada pengembangan berikutnya.
 
 ## Riwayat Pengembangan
-
-- **Pengujian komentar, echo, dan tag dasar PHP** (`57a656e`).
-- **Mempelajari komentar dan keluaran dengan echo dan print** (`787a6e2`).
-- **Membandingkan keluaran tag HTML dan HTML di dalam tag PHP** (`e00d5fd`).
-- **Menambahkan deklarasi variabel PHP** (`2d3cbb2`).
-- **Menambahkan konstanta PHP** (`f845777`).
-- **Menampilkan data mahasiswa dengan variabel dan konstanta** (`45240b9`).
-- **Menambahkan operator aritmetika PHP** (`8cabf9b`).
-- **Menerapkan pemeriksaan rentang semester** (`708b5dc`).
-- **Menerapkan percabangan if-elseif-else** (`c8ffe93`).
-- **Menerapkan operator ternary pada profil mahasiswa** (`b13c4fe`).
-- **Menerapkan percabangan switch-case** (`574f2ff`).
-- **Menerapkan perulangan for untuk target belajar** (`be3cd03`).
-- **Menerapkan perulangan while untuk nomor semester** (`161fcb9`).
-- **Memformat tampilan IPK dengan number_format** (`ce67e71`).
-- **Menampilkan catatan tambahan berdasarkan nilai null** (`b551764`).
-- **Menampilkan tahun dinamis pada footer** (`3c06589`).
-- **Menyesuaikan action formulir ke index.php** (`6a37e4f`).

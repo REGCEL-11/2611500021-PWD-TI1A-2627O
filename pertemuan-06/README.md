@@ -75,3 +75,5 @@ konstanta, operator, percabangan, perulangan, serta fungsi bawaan PHP.
     kali (versi PHP dan versi statis). Keduanya dapat dirapikan pada pengembangan berikutnya.
 
 ## Riwayat Pengembangan
+
+1. "menyelesaikan tugas p6" (9c39bf7)

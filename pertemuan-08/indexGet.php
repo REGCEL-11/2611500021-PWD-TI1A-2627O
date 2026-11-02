@@ -11,8 +11,8 @@ foreach (["nama", "email", "semester", "tanggal", "jenis_pesan", "prodi", "pesan
 
 // P6: PHP dasar dan pemrograman sisi peladen
 // Bagian 1: Variabel dan konstanta
-$nim = "2611500021";
-$namaMahasiswa = "REGEN SAPTA PRAWIRA";
+$nim = "0344300002";
+$namaMahasiswa = "Cantika Putih";
 $programStudi = "TI";
 $tahunAkademik = "2026/2027";
 $semester = 1;
@@ -92,7 +92,7 @@ switch ($programStudi) {
 			<h2>Selamat Datang</h2>
 			<p>Halo, saya <strong><?php echo $namaMahasiswa; ?></strong>. Saya sedang mempelajari matakuliah <strong><?php print NAMA_MATA_KULIAH; ?></strong> pada tahun akademik <?php echo $tahunAkademik; ?>.</p>
 
-			<img src="img/foto-profil.jpg" alt="Foto profil REGEN SAPTA PRAWIRA" />
+			<img src="img/foto-profil.jpg" alt="Foto profil Cantika Putih" />
 		</section>
 
 		<section id="about">

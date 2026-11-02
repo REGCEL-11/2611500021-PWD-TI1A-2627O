@@ -1,8 +1,88 @@
 <?php
 session_start();
 
+function normalizeActivityText($value): string
+{
+	return is_scalar($value) ? trim((string) $value) : "";
+}
+
+function activityTextLength(string $value): ?int
+{
+	$length = preg_match_all("/./us", $value);
+
+	return $length === false ? null : $length;
+}
+
+$activityCategories = [
+	"akademik" => "Akademik",
+	"organisasi" => "Organisasi",
+	"sosial" => "Sosial",
+	"pribadi" => "Pribadi",
+];
+$isActivitySubmission = $_SERVER["REQUEST_METHOD"] === "POST"
+	&& ($_POST["form_type"] ?? null) === "rencana_kegiatan";
+
+if ($isActivitySubmission) {
+	$activityInput = [
+		"nama_kegiatan" => normalizeActivityText($_POST["nama_kegiatan"] ?? ""),
+		"kategori_kegiatan" => normalizeActivityText($_POST["kategori_kegiatan"] ?? ""),
+		"tanggal_pelaksanaan" => normalizeActivityText($_POST["tanggal_pelaksanaan"] ?? ""),
+		"lokasi_kegiatan" => normalizeActivityText($_POST["lokasi_kegiatan"] ?? ""),
+		"deskripsi_kegiatan" => normalizeActivityText($_POST["deskripsi_kegiatan"] ?? ""),
+	];
+	$activityErrors = [];
+
+	foreach ([
+		"nama_kegiatan" => ["Nama kegiatan", 100],
+		"lokasi_kegiatan" => ["Lokasi kegiatan", 100],
+		"deskripsi_kegiatan" => ["Deskripsi kegiatan", 500],
+	] as $field => [$label, $maximumLength]) {
+		$length = activityTextLength($activityInput[$field]);
+		if ($length === null) {
+			$activityErrors[] = $label . " memiliki format teks yang tidak valid.";
+		} elseif ($length === 0) {
+			$activityErrors[] = $label . " wajib diisi.";
+		} elseif ($length > $maximumLength) {
+			$activityErrors[] = $label . " maksimal " . $maximumLength . " karakter.";
+		}
+	}
+
+	if (!array_key_exists($activityInput["kategori_kegiatan"], $activityCategories)) {
+		$activityErrors[] = "Pilih kategori kegiatan yang tersedia.";
+	}
+
+	$date = $activityInput["tanggal_pelaksanaan"];
+	if ($date === "") {
+		$activityErrors[] = "Tanggal pelaksanaan wajib diisi.";
+	} else {
+		$parsedDate = DateTimeImmutable::createFromFormat("!Y-m-d", $date);
+		$dateErrors = DateTimeImmutable::getLastErrors();
+		if (
+			$parsedDate === false
+			|| (
+				$dateErrors !== false
+				&& ($dateErrors["warning_count"] > 0 || $dateErrors["error_count"] > 0)
+			)
+			|| $parsedDate->format("Y-m-d") !== $date
+		) {
+			$activityErrors[] = "Tanggal pelaksanaan tidak valid.";
+		}
+	}
+
+	if ($activityErrors === []) {
+		$_SESSION["rencanaKegiatan"] = $activityInput;
+		unset($_SESSION["rencanaKegiatanDraft"]);
+	} else {
+		$_SESSION["rencanaKegiatanDraft"] = $activityInput;
+	}
+
+	$_SESSION["rencanaKegiatanErrors"] = $activityErrors;
+	header("Location: index.php#rencana-kegiatan");
+	exit;
+}
+
 // P7: Memproses data formulir dan menyimpannya ke dalam session.
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "POST" && !$isActivitySubmission) {
 	$nama = trim((string) ($_POST["nama"] ?? ""));
 	$email = trim((string) ($_POST["email"] ?? ""));
 	$semesterForm = trim((string) ($_POST["semester"] ?? ""));
@@ -35,17 +115,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 // Mengamankan data sebelum ditampilkan kembali ke halaman HTML.
 // P6: PHP dasar dan pemrograman sisi peladen
 // Bagian 1: Variabel dan konstanta
-$nim = "0344300002";
-$namaMahasiswa = "Cantika Putih";
-$programStudi = "SI";
+$nim = "2611500021";
+$namaMahasiswa = "REGEN SAPTA PRAWIRA";
+$programStudi = "TI";
 $tahunAkademik = "2026/2027";
-$semester = 4;
-$ipk = 3.75;
+$semester = 1;
+$ipk = 4.00;
 $statusAktif = true;
 $catatanTambahan = null;
 
 const NAMA_MATA_KULIAH = "Pemrograman Web Dasar";
-const PROFIL_GITHUB = "satpamal";
+const PROFIL_GITHUB = "REGCEL-11";
 
 // Bagian 2: Operator
 $batasSemester = 8;
@@ -75,7 +155,15 @@ switch ($programStudi) {
 	default:
 		$fokusProgramStudi = "Belum ditentukan";
 }
-?>
+
+		$activityPlan = $_SESSION["rencanaKegiatan"] ?? [];
+		$activityErrors = $_SESSION["rencanaKegiatanErrors"] ?? [];
+		$activityDraft = $_SESSION["rencanaKegiatanDraft"] ?? [];
+		$activityPlan = is_array($activityPlan) ? $activityPlan : [];
+		$activityErrors = is_array($activityErrors) ? $activityErrors : [];
+		$activityDraft = is_array($activityDraft) ? $activityDraft : [];
+		unset($_SESSION["rencanaKegiatanErrors"], $_SESSION["rencanaKegiatanDraft"]);
+		?>
 <!doctype html>
 <html lang="id">
 
@@ -106,6 +194,7 @@ switch ($programStudi) {
 			<ul id="navMenu">
 				<li><a href="#home">Beranda</a></li>
 				<li><a href="#about">Tentang</a></li>
+				<li><a href="#rencana-kegiatan">Rencana Kegiatan</a></li>
 				<li><a href="#contact">Kontak</a></li>
 			</ul>
 		</nav>
@@ -116,7 +205,7 @@ switch ($programStudi) {
 			<h2>Selamat Datang</h2>
 			<p>Halo, saya <strong><?php echo $namaMahasiswa; ?></strong>. Saya sedang mempelajari matakuliah <strong><?php print NAMA_MATA_KULIAH; ?></strong> pada tahun akademik <?php echo $tahunAkademik; ?>.</p>
 
-			<img src="img/foto-profil.jpg" alt="Foto profil Nama Mahasiswa" />
+			<img src="img/foto-profil.jpg" alt="Foto profil REGEN SAPTA PRAWIRA" />
 		</section>
 
 		<section id="about">
@@ -172,6 +261,96 @@ switch ($programStudi) {
 					?>
 				</ol>
 			</article>
+		</section>
+
+		<section id="rencana-kegiatan">
+			<h2>Rencana Kegiatan Mahasiswa</h2>
+			<?php if ($activityErrors !== []): ?>
+				<ul class="form-feedback-error" role="alert">
+					<?php foreach ($activityErrors as $activityError): ?>
+						<li><?= htmlspecialchars((string) $activityError, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?></li>
+					<?php endforeach; ?>
+				</ul>
+			<?php endif; ?>
+
+			<form id="rencanaKegiatanForm" action="index.php#rencana-kegiatan" method="post" novalidate>
+				<input type="hidden" name="form_type" value="rencana_kegiatan" />
+
+				<div class="form-group">
+					<label for="namaKegiatan">Nama Kegiatan</label><br />
+					<input
+						class="input-form"
+						type="text"
+						id="namaKegiatan"
+						name="nama_kegiatan"
+						value="<?= htmlspecialchars($activityDraft["nama_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>"
+						maxlength="100"
+						required />
+				</div>
+
+				<div class="form-group">
+					<label for="kategoriKegiatan">Kategori Kegiatan</label><br />
+					<select class="input-form" id="kategoriKegiatan" name="kategori_kegiatan" required>
+						<option value="">-- Pilih Kategori --</option>
+						<?php foreach ($activityCategories as $categoryValue => $categoryLabel): ?>
+							<option
+								value="<?= htmlspecialchars($categoryValue, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>"
+								<?= ($activityDraft["kategori_kegiatan"] ?? "") === $categoryValue ? "selected" : "" ?>>
+								<?= htmlspecialchars($categoryLabel, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="tanggalPelaksanaan">Tanggal Pelaksanaan</label><br />
+					<input
+						class="input-form"
+						type="date"
+						id="tanggalPelaksanaan"
+						name="tanggal_pelaksanaan"
+						value="<?= htmlspecialchars($activityDraft["tanggal_pelaksanaan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>"
+						required />
+				</div>
+
+				<div class="form-group">
+					<label for="lokasiKegiatan">Lokasi Kegiatan</label><br />
+					<input
+						class="input-form"
+						type="text"
+						id="lokasiKegiatan"
+						name="lokasi_kegiatan"
+						value="<?= htmlspecialchars($activityDraft["lokasi_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>"
+						maxlength="100"
+						required />
+				</div>
+
+				<div class="form-group">
+					<label for="deskripsiKegiatan">Deskripsi Kegiatan</label><br />
+					<textarea
+						class="input-form"
+						id="deskripsiKegiatan"
+						name="deskripsi_kegiatan"
+						maxlength="500"
+						required><?= htmlspecialchars($activityDraft["deskripsi_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?></textarea>
+				</div>
+
+				<button type="submit">Kirim</button>
+				<button type="reset">Batal</button>
+				<p class="form-feedback" data-activity-feedback aria-live="polite"></p>
+			</form>
+
+			<?php if ($activityPlan !== []): ?>
+				<article class="submission-result" aria-live="polite">
+					<h3>Data Rencana Kegiatan yang Diterima</h3>
+					<p><strong>Nama Kegiatan:</strong> <?= htmlspecialchars($activityPlan["nama_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?></p>
+					<p><strong>Kategori Kegiatan:</strong> <?= htmlspecialchars($activityCategories[$activityPlan["kategori_kegiatan"] ?? ""] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?></p>
+					<p><strong>Tanggal Pelaksanaan:</strong> <?= htmlspecialchars($activityPlan["tanggal_pelaksanaan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?></p>
+					<p><strong>Lokasi Kegiatan:</strong> <?= htmlspecialchars($activityPlan["lokasi_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?></p>
+					<p><strong>Deskripsi Kegiatan:</strong></p>
+					<p><?= nl2br(htmlspecialchars($activityPlan["deskripsi_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8")) ?></p>
+				</article>
+			<?php endif; ?>
 		</section>
 
 		<section id="contact">

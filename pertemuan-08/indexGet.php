@@ -1,26 +1,27 @@
 <?php
 //P7
-echo $_GET["nama"] . "<br>";
-echo $_GET["email"] . "<br>";
-echo $_GET["semester"] . "<br>";
-echo $_GET["tanggal"] . "<br>";
-echo $_GET["jenis_pesan"] . "<br>";
-echo $_GET["prodi"] . "<br>";
-echo $_GET["pesan"] . "<br>";
+foreach (["nama", "email", "semester", "tanggal", "jenis_pesan", "prodi", "pesan"] as $field) {
+	$value = $_GET[$field] ?? "";
+	echo htmlspecialchars(
+		is_scalar($value) ? (string) $value : "",
+		ENT_QUOTES | ENT_SUBSTITUTE,
+		"UTF-8"
+	) . "<br>";
+}
 
 // P6: PHP dasar dan pemrograman sisi peladen
 // Bagian 1: Variabel dan konstanta
-$nim = "0344300002";
-$namaMahasiswa = "Cantika Putih";
-$programStudi = "SI";
+$nim = "2611500021";
+$namaMahasiswa = "REGEN SAPTA PRAWIRA";
+$programStudi = "TI";
 $tahunAkademik = "2026/2027";
-$semester = 4;
-$ipk = 3.75;
+$semester = 1;
+$ipk = 4.00;
 $statusAktif = true;
 $catatanTambahan = null;
 
 const NAMA_MATA_KULIAH = "Pemrograman Web Dasar";
-const PROFIL_GITHUB = "satpamal";
+const PROFIL_GITHUB = "REGCEL-11";
 
 // Bagian 2: Operator
 $batasSemester = 8;
@@ -91,7 +92,7 @@ switch ($programStudi) {
 			<h2>Selamat Datang</h2>
 			<p>Halo, saya <strong><?php echo $namaMahasiswa; ?></strong>. Saya sedang mempelajari matakuliah <strong><?php print NAMA_MATA_KULIAH; ?></strong> pada tahun akademik <?php echo $tahunAkademik; ?>.</p>
 
-			<img src="img/foto-profil.jpg" alt="Foto profil Nama Mahasiswa" />
+			<img src="img/foto-profil.jpg" alt="Foto profil REGEN SAPTA PRAWIRA" />
 		</section>
 
 		<section id="about">

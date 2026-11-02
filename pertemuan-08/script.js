@@ -126,3 +126,71 @@ contactForms.forEach((contactForm) => {
     }
   });
 });
+
+const activityForm = document.getElementById("rencanaKegiatanForm");
+
+if (activityForm) {
+  const activityFeedback = activityForm.querySelector(
+    "[data-activity-feedback]",
+  );
+  const fieldFor = (name) => activityForm.elements.namedItem(name);
+
+  const clearActivityFeedback = () => {
+    if (activityFeedback) {
+      activityFeedback.textContent = "";
+      activityFeedback.className = "form-feedback";
+    }
+  };
+
+  activityForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearActivityFeedback();
+
+    const activityName = fieldFor("nama_kegiatan").value.trim();
+    const category = fieldFor("kategori_kegiatan").value;
+    const dateValue = fieldFor("tanggal_pelaksanaan").value;
+    const location = fieldFor("lokasi_kegiatan").value.trim();
+    const description = fieldFor("deskripsi_kegiatan").value.trim();
+    let error = "";
+
+    if (activityName.length === 0 || activityName.length > 100) {
+      error = "Nama kegiatan wajib diisi (maksimal 100 karakter).";
+    } else if (
+      !["akademik", "organisasi", "sosial", "pribadi"].includes(category)
+    ) {
+      error = "Pilih kategori kegiatan yang tersedia.";
+    } else if (dateValue === "") {
+      error = "Tanggal pelaksanaan wajib diisi.";
+    } else {
+      const date = new Date(`${dateValue}T00:00:00Z`);
+      if (
+        Number.isNaN(date.getTime()) ||
+        date.toISOString().slice(0, 10) !== dateValue
+      ) {
+        error = "Tanggal pelaksanaan tidak valid.";
+      }
+    }
+
+    if (!error && (location.length === 0 || location.length > 100)) {
+      error = "Lokasi kegiatan wajib diisi (maksimal 100 karakter).";
+    }
+
+    if (!error && (description.length === 0 || description.length > 500)) {
+      error = "Deskripsi kegiatan wajib diisi (maksimal 500 karakter).";
+    }
+
+    if (error) {
+      if (activityFeedback) {
+        activityFeedback.textContent = error;
+        activityFeedback.className = "form-feedback-error";
+      }
+      return;
+    }
+
+    activityForm.submit();
+  });
+
+  activityForm.addEventListener("input", clearActivityFeedback);
+  activityForm.addEventListener("change", clearActivityFeedback);
+  activityForm.addEventListener("reset", clearActivityFeedback);
+}

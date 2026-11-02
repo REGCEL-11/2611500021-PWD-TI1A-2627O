@@ -21,3 +21,4 @@
 - **Tahap 1 - Baseline:** mempertahankan halaman profil, navigasi responsif, formulir Kontak, contoh GET, dan fitur PHP yang sudah tersedia sebelum mengerjakan fitur UTS.
 - **Tahap 2 - Antarmuka:** menambahkan tautan navigasi dan formulir Rencana Kegiatan sebelum Kontak, termasuk lima field, layout responsif, dan validasi awal di browser.
 - **Tahap 3 - Pemrosesan PHP:** menambahkan validasi sisi peladen, normalisasi teks, escaping keluaran, penyimpanan session, dan redirect PRG; proses formulir UTS dipisahkan dari Kontak.
+- **Tahap 4 - Verifikasi:** pemeriksaan editor tidak menemukan error pada `index.php`, `script.js`, dan `style.css`; `git diff --check -- pertemuan-08` bersih. Uji sintaks dan alur POST/PRG belum dapat dijalankan karena PHP CLI tidak tersedia pada lingkungan ini (`php` tidak dikenali).

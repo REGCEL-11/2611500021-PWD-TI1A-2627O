@@ -6,6 +6,13 @@ function normalizeFormText($value): string
     return is_scalar($value) ? trim((string) $value) : '';
 }
 
+function formTextLength(string $value): ?int
+{
+    $length = preg_match_all('/./us', $value);
+
+    return $length === false ? null : $length;
+}
+
 // P7: menerima input POST dan menormalisasi teks
 $nama = normalizeFormText($_POST['nama'] ?? '');
 $email = normalizeFormText($_POST['email'] ?? '');
@@ -148,6 +155,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isRencanaKegiatanSubmission) {
     exit;
 }
 
+$kategoriKegiatanOptions = [
+    'akademik' => 'Akademik',
+    'organisasi' => 'Organisasi',
+    'sosial' => 'Sosial',
+    'pribadi' => 'Pribadi',
+];
+
+if ($isRencanaKegiatanSubmission) {
+    $rencanaKegiatanInput = [
+        'nama_kegiatan' => normalizeFormText($_POST['nama_kegiatan'] ?? ''),
+        'kategori_kegiatan' => normalizeFormText($_POST['kategori_kegiatan'] ?? ''),
+        'tanggal_pelaksanaan' => normalizeFormText($_POST['tanggal_pelaksanaan'] ?? ''),
+        'lokasi_kegiatan' => normalizeFormText($_POST['lokasi_kegiatan'] ?? ''),
+        'deskripsi_kegiatan' => normalizeFormText($_POST['deskripsi_kegiatan'] ?? ''),
+    ];
+    $rencanaKegiatanErrors = [];
+
+    $namaKegiatanLength = formTextLength($rencanaKegiatanInput['nama_kegiatan']);
+    if ($namaKegiatanLength === null) {
+        $rencanaKegiatanErrors[] = 'Nama kegiatan memiliki format teks yang tidak valid.';
+    } elseif ($namaKegiatanLength === 0) {
+        $rencanaKegiatanErrors[] = 'Nama kegiatan wajib diisi.';
+    } elseif ($namaKegiatanLength > 100) {
+        $rencanaKegiatanErrors[] = 'Nama kegiatan maksimal 100 karakter.';
+    }
+
+    if (!array_key_exists(
+        $rencanaKegiatanInput['kategori_kegiatan'],
+        $kategoriKegiatanOptions
+    )) {
+        $rencanaKegiatanErrors[] = 'Pilih kategori kegiatan yang tersedia.';
+    }
+
+    $tanggalPelaksanaan = $rencanaKegiatanInput['tanggal_pelaksanaan'];
+    if ($tanggalPelaksanaan === '') {
+        $rencanaKegiatanErrors[] = 'Tanggal pelaksanaan wajib diisi.';
+    } else {
+        $tanggalValid = DateTimeImmutable::createFromFormat('!Y-m-d', $tanggalPelaksanaan);
+        $tanggalErrors = DateTimeImmutable::getLastErrors();
+
+        if (
+            $tanggalValid === false
+            || (
+                $tanggalErrors !== false
+                && ($tanggalErrors['warning_count'] > 0 || $tanggalErrors['error_count'] > 0)
+            )
+            || $tanggalValid->format('Y-m-d') !== $tanggalPelaksanaan
+        ) {
+            $rencanaKegiatanErrors[] = 'Tanggal pelaksanaan tidak valid.';
+        }
+    }
+
+    $lokasiKegiatanLength = formTextLength($rencanaKegiatanInput['lokasi_kegiatan']);
+    if ($lokasiKegiatanLength === null) {
+        $rencanaKegiatanErrors[] = 'Lokasi kegiatan memiliki format teks yang tidak valid.';
+    } elseif ($lokasiKegiatanLength === 0) {
+        $rencanaKegiatanErrors[] = 'Lokasi kegiatan wajib diisi.';
+    } elseif ($lokasiKegiatanLength > 100) {
+        $rencanaKegiatanErrors[] = 'Lokasi kegiatan maksimal 100 karakter.';
+    }
+
+    $deskripsiKegiatanLength = formTextLength($rencanaKegiatanInput['deskripsi_kegiatan']);
+    if ($deskripsiKegiatanLength === null) {
+        $rencanaKegiatanErrors[] = 'Deskripsi kegiatan memiliki format teks yang tidak valid.';
+    } elseif ($deskripsiKegiatanLength === 0) {
+        $rencanaKegiatanErrors[] = 'Deskripsi kegiatan wajib diisi.';
+    } elseif ($deskripsiKegiatanLength > 500) {
+        $rencanaKegiatanErrors[] = 'Deskripsi kegiatan maksimal 500 karakter.';
+    }
+
+    if ($rencanaKegiatanErrors === []) {
+        $_SESSION['rencanaKegiatan'] = $rencanaKegiatanInput;
+        unset($_SESSION['rencanaKegiatanInput']);
+    } else {
+        $_SESSION['rencanaKegiatanInput'] = $rencanaKegiatanInput;
+    }
+
+    $_SESSION['rencanaKegiatanErrors'] = $rencanaKegiatanErrors;
+    header('Location: index.php#rencana-kegiatan');
+    exit;
+}
+
+$rencanaKegiatan = $_SESSION['rencanaKegiatan'] ?? [];
+$rencanaKegiatanErrors = $_SESSION['rencanaKegiatanErrors'] ?? [];
+$rencanaKegiatanInput = $_SESSION['rencanaKegiatanInput'] ?? [];
+$rencanaKegiatan = is_array($rencanaKegiatan) ? $rencanaKegiatan : [];
+$rencanaKegiatanErrors = is_array($rencanaKegiatanErrors) ? $rencanaKegiatanErrors : [];
+$rencanaKegiatanInput = is_array($rencanaKegiatanInput) ? $rencanaKegiatanInput : [];
+unset($_SESSION['rencanaKegiatanErrors'], $_SESSION['rencanaKegiatanInput']);
+
 $pesanKesalahan = $_SESSION['pesanKesalahan'] ?? '';
 
 $nama = $_SESSION['nama'] ?? '';
@@ -258,6 +355,13 @@ $pesan = $_SESSION['pesan'] ?? '';
 
         <section id="rencana-kegiatan">
             <h2>Rencana Kegiatan Mahasiswa</h2>
+            <?php if ($rencanaKegiatanErrors !== []): ?>
+                <ul class="form-feedback-error" role="alert">
+                    <?php foreach ($rencanaKegiatanErrors as $rencanaKegiatanError): ?>
+                        <li><?= htmlspecialchars((string) $rencanaKegiatanError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
             <form
                 id="rencanaKegiatanForm"
                 action="index.php#rencana-kegiatan"
@@ -273,6 +377,7 @@ $pesan = $_SESSION['pesan'] ?? '';
                         type="text"
                         id="namaKegiatan"
                         name="nama_kegiatan"
+                        value="<?= htmlspecialchars($rencanaKegiatanInput['nama_kegiatan'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
                         maxlength="100"
                         required
                     >
@@ -287,10 +392,12 @@ $pesan = $_SESSION['pesan'] ?? '';
                         required
                     >
                         <option value="">-- Pilih Kategori --</option>
-                        <option value="akademik">Akademik</option>
-                        <option value="organisasi">Organisasi</option>
-                        <option value="sosial">Sosial</option>
-                        <option value="pribadi">Pribadi</option>
+                        <?php foreach ($kategoriKegiatanOptions as $kategoriValue => $kategoriLabel): ?>
+                            <option
+                                value="<?= htmlspecialchars($kategoriValue, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
+                                <?= ($rencanaKegiatanInput['kategori_kegiatan'] ?? '') === $kategoriValue ? 'selected' : '' ?>
+                            ><?= htmlspecialchars($kategoriLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -301,6 +408,7 @@ $pesan = $_SESSION['pesan'] ?? '';
                         type="date"
                         id="tanggalPelaksanaan"
                         name="tanggal_pelaksanaan"
+                        value="<?= htmlspecialchars($rencanaKegiatanInput['tanggal_pelaksanaan'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
                         required
                     >
                 </div>
@@ -312,6 +420,7 @@ $pesan = $_SESSION['pesan'] ?? '';
                         type="text"
                         id="lokasiKegiatan"
                         name="lokasi_kegiatan"
+                        value="<?= htmlspecialchars($rencanaKegiatanInput['lokasi_kegiatan'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
                         maxlength="100"
                         required
                     >
@@ -325,13 +434,25 @@ $pesan = $_SESSION['pesan'] ?? '';
                         name="deskripsi_kegiatan"
                         maxlength="500"
                         required
-                    ></textarea>
+                    ><?= htmlspecialchars($rencanaKegiatanInput['deskripsi_kegiatan'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></textarea>
                 </div>
 
                 <button type="submit">Kirim Rencana</button>
                 <button type="reset">Batal</button>
                 <p id="rencanaFeedback" class="form-feedback" aria-live="polite"></p>
             </form>
+
+            <?php if ($rencanaKegiatan !== []): ?>
+                <article class="submission-result" aria-live="polite">
+                    <h3>Data Rencana Kegiatan yang Diterima</h3>
+                    <p><strong>Nama Kegiatan:</strong> <?= htmlspecialchars($rencanaKegiatan['nama_kegiatan'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
+                    <p><strong>Kategori Kegiatan:</strong> <?= htmlspecialchars($kategoriKegiatanOptions[$rencanaKegiatan['kategori_kegiatan'] ?? ''] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
+                    <p><strong>Tanggal Pelaksanaan:</strong> <?= htmlspecialchars($rencanaKegiatan['tanggal_pelaksanaan'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
+                    <p><strong>Lokasi Kegiatan:</strong> <?= htmlspecialchars($rencanaKegiatan['lokasi_kegiatan'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
+                    <p><strong>Deskripsi Kegiatan:</strong></p>
+                    <p><?= nl2br(htmlspecialchars($rencanaKegiatan['deskripsi_kegiatan'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) ?></p>
+                </article>
+            <?php endif; ?>
         </section>
 
         <section id="contact">

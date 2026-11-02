@@ -23,4 +23,4 @@
 - **Tahap 1 - Baseline:** mengekstrak seluruh isi `bahan-pertemuan-08.zip` ke folder ini.
 - **Tahap 2 - Antarmuka:** menambahkan menu, section, lima field, dan tata letak responsif.
 - **Tahap 3 - Pemrosesan:** menambahkan validasi sisi klien dan peladen, sanitasi, session, PRG, serta tampilan hasil.
-- **Tahap 4 - Verifikasi:** uji browser memastikan kelima field wajib ditolak jika kosong, batas 100/500 karakter diterapkan, form valid mengirim POST, dan tombol Batal membersihkan pesan. Pemeriksaan editor tidak menemukan error pada PHP/JavaScript/CSS, dan `git diff --check -- pertemuan-08` bersih. Uji PHP end-to-end belum dapat dijalankan karena PHP CLI tidak tersedia pada PATH lingkungan ini.
+- **Tahap 4 - Verifikasi:** hasil akhir `index.php` berjumlah 426 baris (starter ZIP: 289 baris). Uji browser memastikan kelima field wajib ditolak jika kosong, batas 100/500 karakter diterapkan, form valid mengirim POST, dan tombol Batal membersihkan pesan. Pemeriksaan editor tidak menemukan error pada PHP/JavaScript/CSS, dan `git diff --check -- pertemuan-08` bersih. Uji PHP end-to-end belum dapat dijalankan karena PHP CLI tidak tersedia pada PATH lingkungan ini.

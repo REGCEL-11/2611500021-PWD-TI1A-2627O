@@ -23,13 +23,13 @@ $isActivitySubmission = $_SERVER["REQUEST_METHOD"] === "POST"
 	&& ($_POST["form_type"] ?? null) === "rencana_kegiatan";
 
 if ($isActivitySubmission) {
-	$activityInput = [
-		"nama_kegiatan" => normalizeActivityText($_POST["nama_kegiatan"] ?? ""),
-		"kategori_kegiatan" => normalizeActivityText($_POST["kategori_kegiatan"] ?? ""),
-		"tanggal_pelaksanaan" => normalizeActivityText($_POST["tanggal_pelaksanaan"] ?? ""),
-		"lokasi_kegiatan" => normalizeActivityText($_POST["lokasi_kegiatan"] ?? ""),
-		"deskripsi_kegiatan" => normalizeActivityText($_POST["deskripsi_kegiatan"] ?? ""),
-	];
+	$activityInput = array_map("normalizeActivityText", [
+		"nama_kegiatan" => $_POST["nama_kegiatan"] ?? "",
+		"kategori_kegiatan" => $_POST["kategori_kegiatan"] ?? "",
+		"tanggal_pelaksanaan" => $_POST["tanggal_pelaksanaan"] ?? "",
+		"lokasi_kegiatan" => $_POST["lokasi_kegiatan"] ?? "",
+		"deskripsi_kegiatan" => $_POST["deskripsi_kegiatan"] ?? "",
+	]);
 	$activityErrors = [];
 
 	foreach ([
@@ -40,33 +40,25 @@ if ($isActivitySubmission) {
 		$length = activityTextLength($activityInput[$field]);
 		if ($length === null) {
 			$activityErrors[] = $label . " memiliki format teks yang tidak valid.";
-		} elseif ($length === 0) {
-			$activityErrors[] = $label . " wajib diisi.";
-		} elseif ($length > $maximumLength) {
-			$activityErrors[] = $label . " maksimal " . $maximumLength . " karakter.";
+		} elseif ($length === 0 || $length > $maximumLength) {
+			$activityErrors[] = $length === 0
+				? $label . " wajib diisi."
+				: $label . " maksimal " . $maximumLength . " karakter.";
 		}
 	}
 
-	if (!array_key_exists($activityInput["kategori_kegiatan"], $activityCategories)) {
+	if (!isset($activityCategories[$activityInput["kategori_kegiatan"]])) {
 		$activityErrors[] = "Pilih kategori kegiatan yang tersedia.";
 	}
 
 	$date = $activityInput["tanggal_pelaksanaan"];
 	if ($date === "") {
 		$activityErrors[] = "Tanggal pelaksanaan wajib diisi.";
-	} else {
-		$parsedDate = DateTimeImmutable::createFromFormat("!Y-m-d", $date);
-		$dateErrors = DateTimeImmutable::getLastErrors();
-		if (
-			$parsedDate === false
-			|| (
-				$dateErrors !== false
-				&& ($dateErrors["warning_count"] > 0 || $dateErrors["error_count"] > 0)
-			)
-			|| $parsedDate->format("Y-m-d") !== $date
-		) {
-			$activityErrors[] = "Tanggal pelaksanaan tidak valid.";
-		}
+	} elseif (
+		!preg_match('/^\d{4}-\d{2}-\d{2}$/D', $date)
+		|| !checkdate((int) substr($date, 5, 2), (int) substr($date, 8, 2), (int) substr($date, 0, 4))
+	) {
+		$activityErrors[] = "Tanggal pelaksanaan tidak valid.";
 	}
 
 	if ($activityErrors === []) {
@@ -275,71 +267,37 @@ switch ($programStudi) {
 
 			<form id="rencanaKegiatanForm" action="index.php#rencana-kegiatan" method="post" novalidate>
 				<input type="hidden" name="form_type" value="rencana_kegiatan" />
-
 				<div class="form-group">
 					<label for="namaKegiatan">Nama Kegiatan</label><br />
-					<input
-						class="input-form"
-						type="text"
-						id="namaKegiatan"
-						name="nama_kegiatan"
-						value="<?= htmlspecialchars($activityDraft["nama_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>"
-						maxlength="100"
-						required />
+					<input class="input-form" type="text" id="namaKegiatan" name="nama_kegiatan" value="<?= htmlspecialchars($activityDraft["nama_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>" maxlength="100" required />
 				</div>
-
 				<div class="form-group">
 					<label for="kategoriKegiatan">Kategori Kegiatan</label><br />
 					<select class="input-form" id="kategoriKegiatan" name="kategori_kegiatan" required>
 						<option value="">-- Pilih Kategori --</option>
 						<?php foreach ($activityCategories as $categoryValue => $categoryLabel): ?>
-							<option
-								value="<?= htmlspecialchars($categoryValue, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>"
-								<?= ($activityDraft["kategori_kegiatan"] ?? "") === $categoryValue ? "selected" : "" ?>>
+							<option value="<?= htmlspecialchars($categoryValue, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>" <?= ($activityDraft["kategori_kegiatan"] ?? "") === $categoryValue ? "selected" : "" ?>>
 								<?= htmlspecialchars($categoryLabel, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>
 							</option>
 						<?php endforeach; ?>
 					</select>
 				</div>
-
 				<div class="form-group">
 					<label for="tanggalPelaksanaan">Tanggal Pelaksanaan</label><br />
-					<input
-						class="input-form"
-						type="date"
-						id="tanggalPelaksanaan"
-						name="tanggal_pelaksanaan"
-						value="<?= htmlspecialchars($activityDraft["tanggal_pelaksanaan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>"
-						required />
+					<input class="input-form" type="date" id="tanggalPelaksanaan" name="tanggal_pelaksanaan" value="<?= htmlspecialchars($activityDraft["tanggal_pelaksanaan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>" required />
 				</div>
-
 				<div class="form-group">
 					<label for="lokasiKegiatan">Lokasi Kegiatan</label><br />
-					<input
-						class="input-form"
-						type="text"
-						id="lokasiKegiatan"
-						name="lokasi_kegiatan"
-						value="<?= htmlspecialchars($activityDraft["lokasi_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>"
-						maxlength="100"
-						required />
+					<input class="input-form" type="text" id="lokasiKegiatan" name="lokasi_kegiatan" value="<?= htmlspecialchars($activityDraft["lokasi_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?>" maxlength="100" required />
 				</div>
-
 				<div class="form-group">
 					<label for="deskripsiKegiatan">Deskripsi Kegiatan</label><br />
-					<textarea
-						class="input-form"
-						id="deskripsiKegiatan"
-						name="deskripsi_kegiatan"
-						maxlength="500"
-						required><?= htmlspecialchars($activityDraft["deskripsi_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?></textarea>
+					<textarea class="input-form" id="deskripsiKegiatan" name="deskripsi_kegiatan" maxlength="500" required><?= htmlspecialchars($activityDraft["deskripsi_kegiatan"] ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") ?></textarea>
 				</div>
-
 				<button type="submit">Kirim</button>
 				<button type="reset">Batal</button>
 				<p class="form-feedback" data-activity-feedback aria-live="polite"></p>
 			</form>
-
 			<?php if ($activityPlan !== []): ?>
 				<article class="submission-result" aria-live="polite">
 					<h3>Data Rencana Kegiatan yang Diterima</h3>

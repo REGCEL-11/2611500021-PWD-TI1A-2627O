@@ -102,3 +102,71 @@ contactForm.addEventListener("reset", () => {
   formFeedback.textContent = "";
   formFeedback.className = "";
 });
+
+const rencanaKegiatanForm = document.getElementById("rencanaKegiatanForm");
+const rencanaFeedback = document.getElementById("rencanaFeedback");
+
+if (rencanaKegiatanForm && rencanaFeedback) {
+  const fieldFor = (name) => rencanaKegiatanForm.elements.namedItem(name);
+
+  const clearRencanaFeedback = () => {
+    rencanaFeedback.textContent = "";
+    rencanaFeedback.className = "form-feedback";
+  };
+
+  rencanaKegiatanForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const namaKegiatan = fieldFor("nama_kegiatan").value.trim();
+    const kategoriKegiatan = fieldFor("kategori_kegiatan").value;
+    const tanggalPelaksanaan = fieldFor("tanggal_pelaksanaan").value;
+    const lokasiKegiatan = fieldFor("lokasi_kegiatan").value.trim();
+    const deskripsiKegiatan = fieldFor("deskripsi_kegiatan").value.trim();
+
+    let pesanKesalahan = "";
+
+    if (namaKegiatan.length === 0 || namaKegiatan.length > 100) {
+      pesanKesalahan = "Nama kegiatan wajib diisi (maksimal 100 karakter).";
+    } else if (
+      !["akademik", "organisasi", "sosial", "pribadi"].includes(
+        kategoriKegiatan,
+      )
+    ) {
+      pesanKesalahan = "Pilih kategori kegiatan yang tersedia.";
+    } else if (tanggalPelaksanaan === "") {
+      pesanKesalahan = "Tanggal pelaksanaan wajib diisi.";
+    } else {
+      const tanggal = new Date(`${tanggalPelaksanaan}T00:00:00Z`);
+      if (
+        Number.isNaN(tanggal.getTime()) ||
+        tanggal.toISOString().slice(0, 10) !== tanggalPelaksanaan
+      ) {
+        pesanKesalahan = "Tanggal pelaksanaan tidak valid.";
+      }
+    }
+
+    if (!pesanKesalahan && lokasiKegiatan.length === 0) {
+      pesanKesalahan = "Lokasi kegiatan wajib diisi.";
+    } else if (!pesanKesalahan && lokasiKegiatan.length > 100) {
+      pesanKesalahan = "Lokasi kegiatan maksimal 100 karakter.";
+    }
+
+    if (!pesanKesalahan && deskripsiKegiatan.length === 0) {
+      pesanKesalahan = "Deskripsi kegiatan wajib diisi.";
+    } else if (!pesanKesalahan && deskripsiKegiatan.length > 500) {
+      pesanKesalahan = "Deskripsi kegiatan maksimal 500 karakter.";
+    }
+
+    if (pesanKesalahan) {
+      rencanaFeedback.textContent = pesanKesalahan;
+      rencanaFeedback.className = "form-feedback-error";
+      return;
+    }
+
+    rencanaKegiatanForm.submit();
+  });
+
+  rencanaKegiatanForm.addEventListener("input", clearRencanaFeedback);
+  rencanaKegiatanForm.addEventListener("change", clearRencanaFeedback);
+  rencanaKegiatanForm.addEventListener("reset", clearRencanaFeedback);
+}

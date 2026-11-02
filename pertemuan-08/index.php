@@ -16,11 +16,11 @@ $prodi = normalizeFormText($_POST['prodi'] ?? '');
 $pesan = normalizeFormText($_POST['pesan'] ?? '');
 $minat = $_POST['minat'] ?? [];
 
-
-
+$isRencanaKegiatanSubmission = $_SERVER['REQUEST_METHOD'] === 'POST'
+    && ($_POST['form_type'] ?? '') === 'rencana_kegiatan';
 $pesanKesalahan = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isRencanaKegiatanSubmission) {
     if (trim($nama ?? '') === '') {
         $pesanKesalahan .= 'Nama lengkap wajib diisi. ';
     }
@@ -132,7 +132,7 @@ switch ($programStudi) {
     default:
         $fokusProgramStudi = "Belum ditentukan";
 }
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isRencanaKegiatanSubmission) {
     $_SESSION['pesanKesalahan'] = $pesanKesalahan;
 
     $_SESSION['nama'] = $nama;
@@ -188,6 +188,7 @@ $pesan = $_SESSION['pesan'] ?? '';
             <ul id="navMenu">
                 <li><a href="#home">Beranda</a></li>
                 <li><a href="#about">Tentang</a></li>
+                <li><a href="#rencana-kegiatan">Rencana Kegiatan</a></li>
                 <li><a href="#contact">Kontak</a></li>
             </ul>
         </nav>
@@ -253,6 +254,84 @@ $pesan = $_SESSION['pesan'] ?? '';
                     ?>
                 </ol>
             </article>
+        </section>
+
+        <section id="rencana-kegiatan">
+            <h2>Rencana Kegiatan Mahasiswa</h2>
+            <form
+                id="rencanaKegiatanForm"
+                action="index.php#rencana-kegiatan"
+                method="post"
+                novalidate
+            >
+                <input type="hidden" name="form_type" value="rencana_kegiatan">
+
+                <div class="form-group">
+                    <label for="namaKegiatan">Nama Kegiatan</label><br>
+                    <input
+                        class="input-form"
+                        type="text"
+                        id="namaKegiatan"
+                        name="nama_kegiatan"
+                        maxlength="100"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="kategoriKegiatan">Kategori Kegiatan</label><br>
+                    <select
+                        class="input-form"
+                        id="kategoriKegiatan"
+                        name="kategori_kegiatan"
+                        required
+                    >
+                        <option value="">-- Pilih Kategori --</option>
+                        <option value="akademik">Akademik</option>
+                        <option value="organisasi">Organisasi</option>
+                        <option value="sosial">Sosial</option>
+                        <option value="pribadi">Pribadi</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tanggalPelaksanaan">Tanggal Pelaksanaan</label><br>
+                    <input
+                        class="input-form"
+                        type="date"
+                        id="tanggalPelaksanaan"
+                        name="tanggal_pelaksanaan"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="lokasiKegiatan">Lokasi Kegiatan</label><br>
+                    <input
+                        class="input-form"
+                        type="text"
+                        id="lokasiKegiatan"
+                        name="lokasi_kegiatan"
+                        maxlength="100"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="deskripsiKegiatan">Deskripsi Kegiatan</label><br>
+                    <textarea
+                        class="input-form"
+                        id="deskripsiKegiatan"
+                        name="deskripsi_kegiatan"
+                        maxlength="500"
+                        required
+                    ></textarea>
+                </div>
+
+                <button type="submit">Kirim Rencana</button>
+                <button type="reset">Batal</button>
+                <p id="rencanaFeedback" class="form-feedback" aria-live="polite"></p>
+            </form>
         </section>
 
         <section id="contact">

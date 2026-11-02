@@ -149,6 +149,21 @@ section {
   margin: 0;
 }
 
+#rencana-kegiatan {
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 20px;
+  margin: 0;
+}
+
+#rencana-kegiatan h2 {
+  color: #003366;
+  border-bottom: 2px solid #003366;
+  padding-bottom: 6px;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
 #contact h2 {
   color: #003366;
   border-bottom: 2px solid #003366;
@@ -161,7 +176,8 @@ section {
   margin: 12px 0;
 }
 
-#contact label {
+#contact label,
+#rencana-kegiatan label {
   color: #1f2937;
   font-weight: bold;
 }
@@ -183,7 +199,8 @@ section {
   resize: vertical;
 }
 
-#contact button {
+#contact button,
+#rencana-kegiatan button {
   background-color: #003366;
   color: #ffffff;
   font-weight: bold;
@@ -229,6 +246,10 @@ footer p {
   }
 
   #contact {
+    grid-column: 1 / -1;
+  }
+
+  #rencana-kegiatan {
     grid-column: 1 / -1;
   }
 

@@ -19,3 +19,4 @@
 ## Riwayat Pengerjaan
 
 - **Tahap 1 - Baseline:** mempertahankan halaman profil, navigasi responsif, formulir Kontak, contoh GET, dan fitur PHP yang sudah tersedia sebelum mengerjakan fitur UTS.
+- **Tahap 2 - Antarmuka:** menambahkan tautan navigasi dan formulir Rencana Kegiatan sebelum Kontak, termasuk lima field, layout responsif, dan validasi awal di browser.

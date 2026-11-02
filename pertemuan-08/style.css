@@ -10,6 +10,7 @@ body {
   background-color: #eef2f7;
 }
 
+/* Header */
 header {
   background-color: #003366;
   color: #ffffff;
@@ -18,36 +19,15 @@ header {
   border: 1px solid #00264d;
 }
 
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 header h1 {
   margin: 0;
   font-size: 28px;
 }
 
-nav {
-  margin-top: 16px;
-}
-
-nav ul {
+.header-top {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-nav a {
-  color: #ffffff;
-  font-weight: bold;
-  text-decoration: none;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #navMenu {
@@ -70,6 +50,25 @@ nav a {
   cursor: pointer;
 }
 
+/* Navigasi */
+nav ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav a {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Layout utama */
 main {
   display: grid;
   grid-template-columns: 1fr;
@@ -80,6 +79,7 @@ section {
   width: 100%;
 }
 
+/* Bagian Home */
 #home {
   background-color: #ffffff;
   border: 1px solid #d0d7de;
@@ -108,6 +108,7 @@ section {
   border: 1px solid #cbd5e1;
 }
 
+/* Bagian Tentang */
 #about {
   background-color: #ffffff;
   border: 1px solid #d0d7de;
@@ -129,10 +130,10 @@ section {
 }
 
 #about p {
-  line-height: 1.5;
   margin: 6px 0;
   padding: 6px 0;
   border-bottom: 1px solid #e6e6e6;
+  line-height: 1.5;
 }
 
 #about ol {
@@ -142,26 +143,12 @@ section {
   border: 1px solid #e6e6e6;
 }
 
+/* Bagian Kontak */
 #contact {
   background-color: #f8fafc;
   border: 1px solid #cbd5e1;
   padding: 20px;
   margin: 0;
-}
-
-#rencana-kegiatan {
-  background-color: #f8fafc;
-  border: 1px solid #cbd5e1;
-  padding: 20px;
-  margin: 0;
-}
-
-#rencana-kegiatan h2 {
-  color: #003366;
-  border-bottom: 2px solid #003366;
-  padding-bottom: 6px;
-  margin-top: 0;
-  margin-bottom: 16px;
 }
 
 #contact h2 {
@@ -176,8 +163,7 @@ section {
   margin: 12px 0;
 }
 
-#contact label,
-#rencana-kegiatan label {
+#contact label {
   color: #1f2937;
   font-weight: bold;
 }
@@ -199,8 +185,7 @@ section {
   resize: vertical;
 }
 
-#contact button,
-#rencana-kegiatan button {
+#contact button {
   background-color: #003366;
   color: #ffffff;
   font-weight: bold;
@@ -210,14 +195,7 @@ section {
   cursor: pointer;
 }
 
-.form-feedback-error {
-  color: #c62828;
-}
-
-.form-feedback-success {
-  color: #2e7d32;
-}
-
+/* Footer */
 footer {
   background-color: #003366;
   color: #ffffff;
@@ -231,26 +209,38 @@ footer p {
   margin: 0;
 }
 
+.form-feedback-error {
+  color: #c62828;
+}
+
+.form-feedback-success {
+  color: #2e7d32;
+}
+
+/* Layout untuk viewport yang lebih lebar */
 @media (min-width: 768px) {
-  main {
-    grid-template-columns: 1fr 1fr;
+  nav {
+    margin-top: 16px;
   }
 
-  nav ul,
-  #navMenu {
-    display: flex;
+  nav ul {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     gap: 16px;
   }
 
+  main {
+    grid-template-columns: 1fr 1fr;
+  }
+
   #contact {
     grid-column: 1 / -1;
   }
 
-  #rencana-kegiatan {
-    grid-column: 1 / -1;
+  #navMenu {
+    display: flex;
+    flex-direction: row;
   }
 
   .nav-toggle {

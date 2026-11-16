@@ -2,14 +2,6 @@
 
 Folder ini berisi halaman profil mahasiswa dan formulir rencana kegiatan. Pertemuan ini melanjutkan materi pertemuan sebelumnya dengan penggunaan array, fungsi PHP, session, dan perulangan.
 
-## Identitas Mahasiswa
-
-- Nama: Cantika Putih
-- NIM profil pada halaman: 0344300002
-- Program Studi: Teknik Informatika (TI)
-- Tahun akademik: 2026/2027
-- Kelompok repository: TI1A
-
 ## Menjalankan Aplikasi
 
 Jalankan proyek melalui Laragon, lalu buka:

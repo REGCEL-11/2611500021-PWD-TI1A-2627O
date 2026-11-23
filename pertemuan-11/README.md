@@ -7,12 +7,16 @@ ditambahkan, diubah, atau dihapus dari basis data.
 
 ## Struktur Berkas
 
-- `index.php`: halaman profil dan formulir baseline P10, serta pengambilan dan
+- `index.php`: halaman profil dan formulir Kontak, serta pengambilan dan
   penyajian data kontak dari MySQL.
 - `koneksi.php`: konfigurasi dan koneksi MySQLi.
 - `fungsi.php`: fungsi sanitasi keluaran HTML.
 - `db_pwd_2611500021.sql`: struktur dan data awal P10.
 - `script.js`, `style.css`, dan `img/foto-profil.jpg`: aset baseline P10.
+
+Bagian Rencana Kegiatan dari baseline P10 tidak disertakan di halaman P11.
+Profil, formulir Kontak, dan penyajian data kontak dari basis data tetap
+tersedia.
 
 ## Menyiapkan Basis Data
 

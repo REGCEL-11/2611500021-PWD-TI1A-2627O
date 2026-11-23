@@ -143,8 +143,7 @@ section {
   border: 1px solid #e6e6e6;
 }
 
-/* Bagian Rencana Kegiatan dan Kontak (gaya kotak yang sama) */
-#rencana-kegiatan,
+/* Bagian Kontak */
 #contact {
   background-color: #f8fafc;
   border: 1px solid #cbd5e1;
@@ -152,7 +151,6 @@ section {
   margin: 0;
 }
 
-#rencana-kegiatan h2,
 #contact h2 {
   color: #003366;
   border-bottom: 2px solid #003366;
@@ -165,7 +163,6 @@ section {
   margin: 12px 0;
 }
 
-#rencana-kegiatan label,
 #contact label {
   color: #1f2937;
   font-weight: bold;
@@ -183,13 +180,11 @@ section {
   border: 1px solid #94a3b8;
 }
 
-#rencana-kegiatan textarea,
 #contact textarea {
   min-height: 80px;
   resize: vertical;
 }
 
-#rencana-kegiatan button,
 #contact button {
   background-color: #003366;
   color: #ffffff;
@@ -259,7 +254,6 @@ footer p {
     grid-template-columns: 1fr 1fr;
   }
 
-  #rencana-kegiatan,
   #contact {
     grid-column: 1 / -1;
   }

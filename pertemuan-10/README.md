@@ -56,6 +56,12 @@ Letakkan proyek di document root Laragon, jalankan Apache, lalu buka:
 Jangan membuka `index.php` langsung sebagai berkas lokal karena halaman
 menggunakan PHP.
 
+## Penyesuaian Halaman
+
+Bagian Rencana Kegiatan dihapus dari halaman P10. Navigasi, pemrosesan PHP,
+dan aturan CSS khusus bagian tersebut juga dihapus; profil dan formulir Kontak
+tetap tersedia.
+
 ## Pemeriksaan
 
 Skema dan data awal pada berkas SQL telah diperiksa terhadap rancangan P10.

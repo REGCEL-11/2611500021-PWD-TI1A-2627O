@@ -2,23 +2,6 @@
 session_start();
 include "fungsi.php";
 
-$daftarKategori = ["Akademik", "Organisasi", "Lomba", "Pengabdian"];
-$jumlahKategori = count($daftarKategori);
-
-// Rencana kegiatan: menyimpan data formulir ke dalam satu session array asosiatif.
-if (isset($_POST["kirim_rencana"])) {
-	$_SESSION["rencana"] = [
-		"nama" => $_POST["nama_kegiatan"] ?? "",
-		"kategori" => $_POST["kategori_kegiatan"] ?? "",
-		"tanggal" => $_POST["tanggal_pelaksanaan"] ?? "",
-		"lokasi" => $_POST["lokasi_kegiatan"] ?? "",
-		"deskripsi" => $_POST["deskripsi_kegiatan"] ?? ""
-	];
-
-	header("Location: index.php#rencana-kegiatan");
-	exit;
-}
-
 // P7: Memproses data formulir dan menyimpannya ke dalam session.
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 	$nama = trim((string) ($_POST["nama"] ?? ""));
@@ -121,7 +104,6 @@ switch ($programStudi) {
             <ul id="navMenu">
                 <li><a href="#home">Beranda</a></li>
                 <li><a href="#about">Tentang</a></li>
-                <li><a href="#rencana-kegiatan">Rencana Kegiatan</a></li>
                 <li><a href="#contact">Kontak</a></li>
             </ul>
         </nav>
@@ -189,83 +171,6 @@ switch ($programStudi) {
 					?>
                 </ol>
             </article>
-        </section>
-
-        <section id="rencana-kegiatan" class="contact">
-            <h2>Rencana Kegiatan Mahasiswa</h2>
-            <p>Tambahkan rencana kegiatan yang akan dilaksanakan.</p>
-            <p>Tersedia <?= $jumlahKategori ?> kategori kegiatan.</p>
-            <p>Kategori pertama (indeks 0): <?= bersihkan($daftarKategori[0]) ?></p>
-            <p>Kategori terakhir (indeks <?= $jumlahKategori - 1 ?>):
-                <?= bersihkan($daftarKategori[$jumlahKategori - 1]) ?></p>
-
-            <form action="index.php#rencana-kegiatan" method="post">
-                <div class="form-group">
-                    <label for="nama_kegiatan">Nama Kegiatan</label><br />
-
-                    <input class="input-form" type="text" id="nama_kegiatan" name="nama_kegiatan"
-                        placeholder="Masukkan nama kegiatan" maxlength="100" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="kategori_kegiatan">Kategori Kegiatan</label><br />
-
-                    <select class="input-form" id="kategori_kegiatan" name="kategori_kegiatan" required>
-                        <option value="">-- Pilih Kategori --</option>
-                        <?php foreach ($daftarKategori as $kategori): ?>
-                        <option value="<?= bersihkan($kategori) ?>"><?= bersihkan($kategori) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="tanggal_pelaksanaan">Tanggal Pelaksanaan</label><br />
-
-                    <input class="input-form" type="date" id="tanggal_pelaksanaan" name="tanggal_pelaksanaan"
-                        required />
-                </div>
-
-                <div class="form-group">
-                    <label for="lokasi_kegiatan">Lokasi Kegiatan</label><br />
-
-                    <input class="input-form" type="text" id="lokasi_kegiatan" name="lokasi_kegiatan"
-                        placeholder="Masukkan lokasi kegiatan" maxlength="100" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="deskripsi_kegiatan">Deskripsi Kegiatan</label><br />
-
-                    <textarea class="input-form" id="deskripsi_kegiatan" name="deskripsi_kegiatan" maxlength="300"
-                        placeholder="Tulis deskripsi kegiatan" required></textarea>
-                </div>
-
-                <button type="submit" name="kirim_rencana">Kirim</button>
-                <button type="reset">Batal</button>
-            </form>
-
-            <?php $rencana = $_SESSION["rencana"] ?? null; ?>
-            <?php if ($rencana): ?>
-            <article id="hasilRencana" class="submission-result" aria-live="polite">
-                <h3>Data Rencana Kegiatan yang Dikirim</h3>
-                <?php
-					$labelRencana = [
-						"nama" => "Nama Kegiatan",
-						"kategori" => "Kategori Kegiatan",
-						"tanggal" => "Tanggal Pelaksanaan",
-						"lokasi" => "Lokasi Kegiatan",
-						"deskripsi" => "Deskripsi Kegiatan"
-					];
-
-					foreach ($labelRencana as $kunci => $label) {
-						$hasil = bersihkan($rencana[$kunci] ?? "");
-						if ($kunci === "deskripsi") {
-							$hasil = nl2br($hasil);
-						}
-						echo "<p><strong>" . $label . ":</strong> " . $hasil . "</p>";
-					}
-					?>
-            </article>
-            <?php endif; ?>
         </section>
 
         <section id="contact">

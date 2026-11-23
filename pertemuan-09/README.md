@@ -1,6 +1,8 @@
 # Pertemuan 09 - Array dan Fungsi PHP
 
-Folder ini berisi halaman profil mahasiswa dan formulir rencana kegiatan. Pertemuan ini melanjutkan materi pertemuan sebelumnya dengan penggunaan array, fungsi PHP, session, dan perulangan.
+Folder ini berisi halaman profil mahasiswa dan formulir Kontak. Pertemuan ini
+melanjutkan materi pertemuan sebelumnya dengan penggunaan array, fungsi PHP,
+session, dan perulangan.
 
 ## Menjalankan Aplikasi
 
@@ -14,7 +16,7 @@ Pastikan folder proyek berada di document root Laragon sesuai alamat tersebut. H
 
 1. Menyalin dan menyesuaikan bahan halaman untuk folder `pertemuan-09`.
 2. Memindahkan fungsi sanitasi keluaran ke `fungsi.php`, lalu menambahkan fungsi pemformatan label.
-3. Mengubah penyimpanan formulir kontak dan rencana kegiatan menjadi masing-masing satu array asosiatif di session.
-4. Menggunakan array kategori dan `foreach` untuk mengisi pilihan kategori serta menampilkan data formulir.
+3. Menyimpan data formulir Kontak sebagai satu array asosiatif di session.
+4. Menggunakan array dan `foreach` untuk memproses pilihan topik serta menampilkan data formulir.
 5. Menyesuaikan identitas yang ditampilkan agar mengikuti data profil pada P8, termasuk nama, NIM, IPK, tautan GitHub, teks alternatif foto, dan foto profil.
 6. Memperbarui alamat aplikasi lokal di dokumentasi ini.

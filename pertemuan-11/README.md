@@ -25,6 +25,17 @@ ditambahkan, diubah, atau dihapus dari basis data.
    `root`, kata sandi kosong, dan basis data `db_pwd_2611500021`. Sesuaikan
    parameter tersebut bila konfigurasi MySQL lokal berbeda.
 
+## Mengekspor Berkas SQL
+
+1. Buka phpMyAdmin dan pilih basis data `db_pwd_2611500021`.
+2. Pilih tab **Export**, gunakan metode **Quick** dan format **SQL**, lalu
+   jalankan ekspor.
+3. Simpan hasilnya di folder `pertemuan-11` dengan nama
+   `db_pwd_2611500021.sql`.
+4. Periksa berkas hasil ekspor: pastikan definisi tabel
+   `tbl_kontak_2611500021` dan perintah `INSERT` untuk data kontak ikut
+   tercantum.
+
 ## Menjalankan dan Memeriksa Aplikasi
 
 Buka:
@@ -50,6 +61,8 @@ Basis Data” hanya berasal dari tabel; operasi tulis berada di luar cakupan P11
 
 - Basis data `db_pwd_2611500021` dan tabel `tbl_kontak_2611500021` tersedia
   pada MySQL lokal dengan dua baris data.
+- Berkas SQL P11 memuat definisi tabel dan dua baris data yang sesuai dengan
+  basis data lokal.
 - Halaman P11 berhasil dibuka dan menampilkan kedua baris dari basis data.
 - Kondisi tabel kosong diuji dengan kueri sementara `WHERE 1 = 0`; pesan
   “Belum ada data kontak yang tersimpan.” tampil. Kueri aplikasi kemudian
